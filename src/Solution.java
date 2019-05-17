@@ -424,4 +424,121 @@ class Solution {
     }
 
 
+    /**
+     * p1031
+     * @param A
+     * @param L
+     * @param M
+     * @return
+     */
+    public int maxSumTwoNoOverlap(int[] A, int L, int M) {
+        int[] Ls = new int[A.length - L + 1];
+        int[] Ms = new int[A.length - M + 1];
+        genSun(A, L, Ls);
+        genSun(A, M, Ms);
+        for(int i : Ms){
+            System.out.println(i);
+        }
+        int max = 0;
+        for(int i=0; i<A.length; i++){
+            if(i >= Ls.length) break;
+            for(int j =0; j<A.length; j++){
+                if(j >= Ms.length || (j+M-1<i || j>i+L-1))
+                    continue;
+                max = Math.max(max, Ls[i] + Ms[j]);
+            }
+        }
+        return max;
+    }
+
+    private void genSun(int[] A, int M, int[] ms) {
+        int window = 0;
+        for(int i=0; i<M; i++){
+            window += A[i];
+        }
+        ms[0] = window;
+        for(int i = 1; i <= A.length-M; i++){
+            window -= A[i-1];
+            window += A[i+M-1];
+            ms[i] = window;
+        }
+    }
+
+    public boolean hasGroupsSizeX(int[] deck) {
+        int count[] = new int[10001];
+        for(int i : deck){
+            count[i]++;
+        }
+        int res = 0;
+        for(int i: count){
+            res = gcd(i, res);
+        }
+        return  res >= 2;
+    }
+
+    public int gcd(int a, int b) {
+        return b > 0 ? gcd(b, a % b) : a;
+    }
+
+
+    public int removeElement(int[] nums, int val) {
+        int lo = 0;
+        int hi = nums.length - 1;
+        while(lo <= hi){
+           if(nums[lo] == val){
+               nums[lo] = nums[hi];
+               hi --;
+           }else {
+               lo ++;
+           }
+        }
+        return hi + 1;
+    }
+
+    public int findLengthOfLCIS(int[] nums) {
+        int ans = 0;
+        int temp = 0;
+        for(int i=0; i<nums.length; i++){
+            if(i>0 && nums[i]>nums[i-1]){
+                ans = Math.max(ans, ++temp);
+            }else{
+                temp = 1;
+            }
+        }
+        return ans;
+    }
+
+    public String countAndSay(int n) {
+        String[] dp = new String[n+1];
+        dp[1] = "1";
+        for(int i = 2; i<=n; i++){
+            String curr = dp[i-1];
+            StringBuffer sb = new StringBuffer(2*curr.length());
+            int count = 0;
+            char currChar = curr.charAt(0);
+            for(int j=0; j<curr.length(); j++){
+                if(j == 0 || curr.charAt(j) == curr.charAt(j-1)){
+                    count ++;
+                }else{
+                    sb.append(count);
+                    sb.append(currChar);
+                    currChar = curr.charAt(j);
+                    count = 1;
+                }
+            }
+            dp[i] = sb.toString();
+        }
+        return dp[n];
+    }
+
+    public int twoCitySchedCost(int[][] costs) {
+        Arrays.sort(costs, (a,b)->(a[0]-a[1])-(b[0]-b[1]));
+        int ans = 0;
+        for(int i=0; i<costs.length; i++){
+            if(i<costs.length/2) ans += costs[i][0];
+            else ans += costs[i][1];
+        }
+        return ans;
+    }
+
 }
